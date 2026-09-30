@@ -75,6 +75,7 @@ class OpenAILanguageModel:
                 model=self.model,
                 instructions=self.INSTRUCTIONS,
                 input=prompt,
+                store=False,
             )
             answer = response.output_text.strip()
         except Exception as exc:
