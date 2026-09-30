@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from pinecone import Pinecone
+from pinecone import NotFoundError, Pinecone
 
 from app.core.errors import ConfigurationError, PineconeServiceError
 from app.services.domain import RetrievedChunk, VectorRecord
@@ -47,6 +47,9 @@ class PineconeVectorStore:
                 filter={"docId": {"$eq": doc_id}},
                 namespace=self.namespace,
             )
+        except NotFoundError:
+            # Namespace does not exist yet — nothing to delete, safe to continue.
+            pass
         except Exception as exc:
             raise PineconeServiceError("Pinecone could not replace the document.") from exc
 
