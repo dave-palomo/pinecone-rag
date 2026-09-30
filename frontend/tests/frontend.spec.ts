@@ -78,7 +78,10 @@ test("ingest success renders backend counts", async ({ page }) => {
   await expect(
     page.getByText("1 document ingested. 3 chunks stored."),
   ).toBeVisible();
-  await expect(page.getByLabel("Document ID")).toHaveValue("refund-policy");
+  await expect(page.getByLabel("Document ID")).toHaveValue("");
+  await expect(page.getByLabel("Title")).toHaveValue("");
+  await expect(page.getByLabel("Content")).toHaveValue("");
+  await expect(page.getByLabel("Document ID")).toHaveCount(1);
 });
 
 test("ingest error renders the backend public message", async ({ page }) => {

@@ -115,6 +115,8 @@ export function DocumentList() {
     try {
       const response = await ingestDocuments(payload);
       setResult(response);
+      setDocuments([{ ...EMPTY_DOCUMENT }]);
+      setFieldErrors([]);
     } catch (requestError) {
       setError(
         requestError instanceof Error
