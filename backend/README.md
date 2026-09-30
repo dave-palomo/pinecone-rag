@@ -32,6 +32,23 @@ python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 Swagger UI is available at `http://localhost:8000/docs` and the health check at
 `http://localhost:8000/health`.
 
+## Error responses
+
+Every non-successful API response uses one stable envelope:
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request payload."
+  }
+}
+```
+
+The initial public codes are `VALIDATION_ERROR`, `INVALID_REQUEST`,
+`OPENAI_ERROR`, `PINECONE_ERROR`, and `INTERNAL_ERROR`. Provider payloads and
+internal exception details are never included in the HTTP response.
+
 ## Tests
 
 Tests use fakes and do not call OpenAI or Pinecone:

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from app.core.errors import ProviderDataError
+from app.core.errors import OpenAIServiceError
 from app.models.schemas import AskResponse
 from app.services.domain import EmbeddingProvider, LanguageModel, VectorStore
 from app.services.prompting import build_rag_prompt, build_sources
@@ -27,7 +27,7 @@ class RagService:
     def ask(self, question: str) -> AskResponse:
         embeddings = self.embedder.embed_texts([question])
         if len(embeddings) != 1:
-            raise ProviderDataError("The question embedding response was invalid.")
+            raise OpenAIServiceError("The question embedding response was invalid.")
 
         chunks = self.vector_store.query(embeddings[0], self.top_k)
         if not chunks:

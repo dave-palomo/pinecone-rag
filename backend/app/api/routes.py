@@ -1,9 +1,11 @@
 """Public API routes."""
 
+from collections.abc import Callable
+
 from fastapi import APIRouter, Depends
 
 from app import __version__
-from app.api.dependencies import get_ingestion_service, get_rag_service
+from app.api.dependencies import get_ingestion_service_factory, get_rag_service_factory
 from app.core.config import Settings, get_settings
 from app.models.schemas import (
     AskRequest,
@@ -31,14 +33,16 @@ def health(settings: Settings = Depends(get_settings)) -> HealthResponse:
 @router.post("/ingest", response_model=IngestResponse, tags=["rag"])
 def ingest(
     payload: IngestRequest,
-    service: IngestionService = Depends(get_ingestion_service),
+    service_factory: Callable[[], IngestionService] = Depends(
+        get_ingestion_service_factory
+    ),
 ) -> IngestResponse:
-    return service.ingest(payload.documents)
+    return service_factory().ingest(payload.documents)
 
 
 @router.post("/ask", response_model=AskResponse, tags=["rag"])
 def ask(
     payload: AskRequest,
-    service: RagService = Depends(get_rag_service),
+    service_factory: Callable[[], RagService] = Depends(get_rag_service_factory),
 ) -> AskResponse:
-    return service.ask(payload.question)
+    return service_factory().ask(payload.question)

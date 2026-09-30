@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from app.core.errors import ProviderDataError
+from app.core.errors import InvalidRequestError, OpenAIServiceError
 from app.models.schemas import DocumentInput, IngestResponse
 from app.services.chunking import build_vector_id
 from app.services.domain import ChunkingService, EmbeddingProvider, VectorRecord, VectorStore
@@ -28,12 +28,12 @@ class IngestionService:
         for document in documents:
             chunks = self.chunker.split(document.content)
             if not chunks:
-                raise ProviderDataError("Tokenization produced no document chunks.")
+                raise InvalidRequestError("Tokenization produced no document chunks.")
 
             # Generate every new vector before deleting the prior logical document.
             embeddings = self.embedder.embed_texts([chunk.text for chunk in chunks])
             if len(embeddings) != len(chunks):
-                raise ProviderDataError(
+                raise OpenAIServiceError(
                     "The embedding count does not match the document chunk count."
                 )
 

@@ -61,3 +61,12 @@ class HealthResponse(ApiModel):
     status: str
     environment: str
     version: str
+
+
+class ErrorDetail(ApiModel):
+    code: str
+    message: str
+
+
+class ErrorResponse(ApiModel):
+    error: ErrorDetail

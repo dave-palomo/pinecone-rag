@@ -7,7 +7,7 @@ from typing import Any
 
 from pinecone import Pinecone
 
-from app.core.errors import ConfigurationError, ExternalServiceError, ProviderDataError
+from app.core.errors import ConfigurationError, PineconeServiceError
 from app.services.domain import RetrievedChunk, VectorRecord
 
 
@@ -32,7 +32,7 @@ class PineconeVectorStore:
             dimension = _read_field(description, "dimension")
             metric = _read_field(description, "metric")
         except Exception as exc:
-            raise ExternalServiceError("The configured Pinecone index is unavailable.") from exc
+            raise PineconeServiceError("The configured Pinecone index is unavailable.") from exc
 
         if dimension is not None and int(dimension) != expected_dimensions:
             raise ConfigurationError(
@@ -48,7 +48,7 @@ class PineconeVectorStore:
                 namespace=self.namespace,
             )
         except Exception as exc:
-            raise ExternalServiceError("Pinecone could not replace the document.") from exc
+            raise PineconeServiceError("Pinecone could not replace the document.") from exc
 
     def upsert(self, records: Sequence[VectorRecord]) -> None:
         vectors = [
@@ -69,7 +69,7 @@ class PineconeVectorStore:
                 show_progress=False,
             )
         except Exception as exc:
-            raise ExternalServiceError("Pinecone could not store document vectors.") from exc
+            raise PineconeServiceError("Pinecone could not store document vectors.") from exc
 
     def query(self, vector: Sequence[float], top_k: int) -> list[RetrievedChunk]:
         try:
@@ -81,7 +81,7 @@ class PineconeVectorStore:
                 include_values=False,
             )
         except Exception as exc:
-            raise ExternalServiceError("Pinecone query failed.") from exc
+            raise PineconeServiceError("Pinecone query failed.") from exc
 
         retrieved: list[RetrievedChunk] = []
         for match in response.matches or []:
@@ -114,7 +114,7 @@ def _parse_match(
     if int(chunk_index) != chunk_index:
         return None
     if score is None:
-        raise ProviderDataError("Pinecone returned a match without a score.")
+        raise PineconeServiceError("Pinecone returned a match without a score.")
     return RetrievedChunk(
         id=match_id,
         score=float(score),

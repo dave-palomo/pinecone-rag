@@ -6,7 +6,7 @@ from collections.abc import Sequence
 
 from openai import OpenAI
 
-from app.core.errors import ExternalServiceError, ProviderDataError
+from app.core.errors import OpenAIServiceError
 
 
 class OpenAIEmbeddingService:
@@ -38,20 +38,20 @@ class OpenAIEmbeddingService:
                 )
                 ordered = sorted(response.data, key=lambda item: item.index)
                 if len(ordered) != len(batch):
-                    raise ProviderDataError(
+                    raise OpenAIServiceError(
                         "OpenAI returned a different number of embeddings than requested."
                     )
                 for item in ordered:
                     embedding = list(item.embedding)
                     if len(embedding) != self.dimensions:
-                        raise ProviderDataError(
+                        raise OpenAIServiceError(
                             "OpenAI returned an embedding with an unexpected dimension."
                         )
                     embeddings.append(embedding)
-        except ProviderDataError:
+        except OpenAIServiceError:
             raise
         except Exception as exc:
-            raise ExternalServiceError("OpenAI embedding request failed.") from exc
+            raise OpenAIServiceError("OpenAI embedding request failed.") from exc
 
         return embeddings
 
@@ -78,8 +78,8 @@ class OpenAILanguageModel:
             )
             answer = response.output_text.strip()
         except Exception as exc:
-            raise ExternalServiceError("OpenAI answer request failed.") from exc
+            raise OpenAIServiceError("OpenAI answer request failed.") from exc
 
         if not answer:
-            raise ProviderDataError("OpenAI returned an empty answer.")
+            raise OpenAIServiceError("OpenAI returned an empty answer.")
         return answer

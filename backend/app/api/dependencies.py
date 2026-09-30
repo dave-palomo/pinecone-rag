@@ -1,5 +1,6 @@
 """Cached production service construction for FastAPI dependencies."""
 
+from collections.abc import Callable
 from functools import lru_cache
 
 from fastapi import Depends
@@ -53,10 +54,10 @@ def _build_ingestion_service(settings: Settings) -> IngestionService:
     )
 
 
-def get_ingestion_service(
+def get_ingestion_service_factory(
     settings: Settings = Depends(get_settings),
-) -> IngestionService:
-    return _build_ingestion_service(settings)
+) -> Callable[[], IngestionService]:
+    return lambda: _build_ingestion_service(settings)
 
 
 @lru_cache(maxsize=4)
@@ -69,5 +70,7 @@ def _build_rag_service(settings: Settings) -> RagService:
     )
 
 
-def get_rag_service(settings: Settings = Depends(get_settings)) -> RagService:
-    return _build_rag_service(settings)
+def get_rag_service_factory(
+    settings: Settings = Depends(get_settings),
+) -> Callable[[], RagService]:
+    return lambda: _build_rag_service(settings)

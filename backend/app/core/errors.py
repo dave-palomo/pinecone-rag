@@ -3,8 +3,8 @@
 
 class ApplicationError(Exception):
     status_code = 500
-    code = "internal_error"
-    public_message = "The request could not be completed."
+    code = "INTERNAL_ERROR"
+    public_message = "An unexpected server error occurred."
 
     def __init__(self, internal_message: str | None = None) -> None:
         super().__init__(internal_message or self.public_message)
@@ -12,17 +12,23 @@ class ApplicationError(Exception):
 
 class ConfigurationError(ApplicationError):
     status_code = 503
-    code = "configuration_error"
+    code = "INTERNAL_ERROR"
     public_message = "The backend is not configured for this operation."
 
 
-class ExternalServiceError(ApplicationError):
-    status_code = 502
-    code = "external_service_error"
-    public_message = "An external AI or vector service could not complete the request."
+class InvalidRequestError(ApplicationError):
+    status_code = 400
+    code = "INVALID_REQUEST"
+    public_message = "Invalid request."
 
 
-class ProviderDataError(ApplicationError):
+class OpenAIServiceError(ApplicationError):
     status_code = 502
-    code = "invalid_provider_response"
-    public_message = "An external service returned an invalid response."
+    code = "OPENAI_ERROR"
+    public_message = "Failed to process the request with the AI provider."
+
+
+class PineconeServiceError(ApplicationError):
+    status_code = 502
+    code = "PINECONE_ERROR"
+    public_message = "Failed to access the vector store."
