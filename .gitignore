@@ -5,6 +5,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 yarn.lock
+.blank
 
 # Environment variables
 .env
