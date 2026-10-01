@@ -79,13 +79,12 @@ export function validatePineconeIndex(description: IndexModel, expectedDimension
     );
   }
 
-  const denseFields = Object.values(description.schema.fields).filter(
-    (field) => "type" in field && field.type === "dense_vector",
-  );
-  if (denseFields.length !== 1) {
-    throw new PineconeServiceError("The Pinecone index must have exactly one dense vector field.");
+  const denseField = description.schema.fields["_values"];
+  if (!denseField || !("type" in denseField) || denseField.type !== "dense_vector") {
+    throw new PineconeServiceError(
+      "The Pinecone index must use the reserved _values dense vector field.",
+    );
   }
-  const denseField = denseFields[0];
   if (!denseField || denseField.dimension !== expectedDimensions) {
     throw new PineconeServiceError(
       "The Pinecone index dimension does not match EMBEDDING_DIMENSIONS.",

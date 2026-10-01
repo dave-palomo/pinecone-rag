@@ -87,5 +87,8 @@ export function validateProviderConfiguration(
 }
 
 export function getAllowedOrigin(environment: Environment = process.env): string {
-  return getString(environment, "ALLOWED_ORIGIN", "http://localhost:3000") || "http://localhost:3000";
+  return (
+    getString(environment, "ALLOWED_ORIGIN", "http://localhost:3000") ||
+    "http://localhost:3000"
+  );
 }

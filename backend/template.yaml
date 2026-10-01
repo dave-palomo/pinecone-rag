@@ -122,9 +122,9 @@ Resources:
         Sourcemap: true
         UseNpmCi: true
     Properties:
-      FunctionName: !Sub doc-qa-ingest-${AppEnv}
+      FunctionName: !Sub doc-qa-nodejs-ingest-${AppEnv}
       CodeUri: .
-      Handler: src/lambdas/ingest/handler.handler
+      Handler: handler.handler
       Policies:
         - AWSLambdaBasicExecutionRole
 
@@ -143,9 +143,9 @@ Resources:
         Sourcemap: true
         UseNpmCi: true
     Properties:
-      FunctionName: !Sub doc-qa-ask-${AppEnv}
+      FunctionName: !Sub doc-qa-nodejs-ask-${AppEnv}
       CodeUri: .
-      Handler: src/lambdas/ask/handler.handler
+      Handler: handler.handler
       Policies:
         - AWSLambdaBasicExecutionRole
 
