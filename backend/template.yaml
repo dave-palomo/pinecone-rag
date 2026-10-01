@@ -94,7 +94,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IngestFunction.Arn}/invocations
-                timeoutInMillis: 90000
+                timeoutInMillis: 29000
               responses: {}
           /ask:
             post:
@@ -104,7 +104,7 @@ Resources:
                 type: aws_proxy
                 httpMethod: POST
                 uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AskFunction.Arn}/invocations
-                timeoutInMillis: 90000
+                timeoutInMillis: 29000
               responses: {}
 
   IngestFunction:
