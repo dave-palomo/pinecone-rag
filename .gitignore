@@ -70,6 +70,8 @@ backend/npm
 # Internal project specs (not for public repo)
 backend_specs.md
 *.pdf
+CLAUDE.md
+AGENTS.md
 
 # Local E2E / diagnostic scripts (not for public repo)
 backend/scripts/
