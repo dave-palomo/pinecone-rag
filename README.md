@@ -76,8 +76,16 @@ pinecone_rag/
 
 - Python 3.12+
 - Node.js 20+
-- A [Pinecone](https://www.pinecone.io/) index configured for **cosine** similarity
 - An OpenAI API key with access to an embedding model and a chat/responses model
+- A Pinecone index that satisfies the following contract:
+
+| Property | Required value |
+|---|---|
+| Vector type | Dense |
+| Dimension | `1536` (must match `EMBEDDING_DIMENSIONS`) |
+| Similarity metric | Cosine |
+
+The application does not provision the index automatically. It fails at startup with a clear error if the index is missing, has wrong dimensions, or uses a non-cosine metric. Both ingestion and retrieval must use the same `PINECONE_INDEX` and `PINECONE_NAMESPACE` values.
 
 ### 1 — Backend
 
@@ -278,6 +286,18 @@ The spec includes `"topK": 3` in the `/ask` request body. I exposed this as `ASK
 **Single-stage synchronous ingestion**
 
 All chunking, embedding, and upsert happen synchronously inside `POST /ingest`. For large documents or bulk uploads this blocks the HTTP connection. The async SQS pattern described in the spec's "nice-to-have" section would decouple ingestion from the HTTP response.
+
+**Multi-document partial failure**
+
+Documents inside a single `POST /ingest` request are processed sequentially. If one document fails (e.g. an OpenAI error), processing stops and the request returns an error — but any documents that were successfully ingested before the failure remain committed in Pinecone. There is no request-wide rollback. Duplicate `id` values within the same request are rejected during schema validation to avoid ambiguous replacement order.
+
+---
+
+## Known limitations
+
+**Non-transactional document replacement**
+
+Re-ingesting a document follows a delete-then-upsert pattern. To reduce the failure window, all new embeddings are generated and verified *before* the existing Pinecone vectors are deleted. However, if Pinecone fails between the delete and the upsert steps, that document will be temporarily absent from the index until the next successful ingestion. A fully atomic replacement would require external coordination (e.g. write-ahead log or transactional Pinecone namespace swap) and is deferred for a future iteration.
 
 ---
 
