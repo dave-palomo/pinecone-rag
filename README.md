@@ -254,16 +254,27 @@ Tests mock the backend network layer and verify document form add/remove, client
 
 ---
 
-## Deployment (Railway)
+## Deployment (Railway + Vercel)
 
-The backend is designed for Railway's PaaS. Deployment steps:
+| Service | Platform | URL |
+|---|---|---|
+| Backend API | Railway | https://pinecone-rag-production.up.railway.app |
+| Frontend | Vercel | https://pinecone-rag-frontend.vercel.app |
+
+### Deploy steps
+
+**Backend (Railway)**
 
 1. Create a Railway project and link this repository.
-2. Set the root directory to `backend/` (or point the start command at it).
+2. Set the root directory to `backend/`.
 3. Add all required environment variables in the Railway dashboard (same table as above, plus Railway's injected `PORT` is read automatically).
 4. Railway runs `python -m app` via the `Procfile`; Uvicorn binds to `$PORT`.
+5. Set `ALLOWED_ORIGINS` to the Vercel frontend URL.
 
-For the frontend, deploy to Vercel (or any static host) and set `NEXT_PUBLIC_API_BASE_URL` to the Railway service URL.
+**Frontend (Vercel)**
+
+1. Import the repository in Vercel and set the root directory to `frontend/`.
+2. Set `NEXT_PUBLIC_API_BASE_URL=https://pinecone-rag-production.up.railway.app` as an environment variable.
 
 ---
 
