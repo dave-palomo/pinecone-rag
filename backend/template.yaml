@@ -1,0 +1,171 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Doc Q&A Portal RAG API using TypeScript Lambda functions.
+
+Parameters:
+  AppEnv:
+    Type: String
+    Default: development
+  AllowedOrigin:
+    Type: String
+    Default: http://localhost:3000
+  OpenAIApiKey:
+    Type: String
+    NoEcho: true
+  OpenAIEmbeddingModel:
+    Type: String
+    Default: text-embedding-3-small
+  OpenAILlmModel:
+    Type: String
+  EmbeddingDimensions:
+    Type: Number
+    Default: 1536
+  PineconeApiKey:
+    Type: String
+    NoEcho: true
+  PineconeIndex:
+    Type: String
+  PineconeNamespace:
+    Type: String
+    Default: ''
+  ChunkSize:
+    Type: Number
+    Default: 600
+  ChunkOverlap:
+    Type: Number
+    Default: 100
+  EmbeddingBatchSize:
+    Type: Number
+    Default: 100
+  AskTopK:
+    Type: Number
+    Default: 3
+
+Globals:
+  Function:
+    Runtime: nodejs24.x
+    Architectures:
+      - x86_64
+    Timeout: 90
+    MemorySize: 1024
+    Environment:
+      Variables:
+        APP_ENV: !Ref AppEnv
+        ALLOWED_ORIGIN: !Ref AllowedOrigin
+        OPENAI_API_KEY: !Ref OpenAIApiKey
+        OPENAI_EMBEDDING_MODEL: !Ref OpenAIEmbeddingModel
+        OPENAI_LLM_MODEL: !Ref OpenAILlmModel
+        EMBEDDING_DIMENSIONS: !Ref EmbeddingDimensions
+        PINECONE_API_KEY: !Ref PineconeApiKey
+        PINECONE_INDEX: !Ref PineconeIndex
+        PINECONE_NAMESPACE: !Ref PineconeNamespace
+        CHUNK_SIZE: !Ref ChunkSize
+        CHUNK_OVERLAP: !Ref ChunkOverlap
+        EMBEDDING_BATCH_SIZE: !Ref EmbeddingBatchSize
+        ASK_TOP_K: !Ref AskTopK
+        NODE_OPTIONS: --enable-source-maps
+
+Resources:
+  DocQaApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub doc-qa-api-${AppEnv}
+      StageName: Prod
+      AlwaysDeploy: true
+      EndpointConfiguration:
+        Type: REGIONAL
+      Cors:
+        AllowOrigin: !Sub "'${AllowedOrigin}'"
+        AllowHeaders: "'Content-Type'"
+        AllowMethods: "'POST,OPTIONS'"
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          title: Doc Q&A Portal API
+          version: '1.0'
+        schemes:
+          - https
+        paths:
+          /ingest:
+            post:
+              produces:
+                - application/json
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IngestFunction.Arn}/invocations
+                timeoutInMillis: 90000
+              responses: {}
+          /ask:
+            post:
+              produces:
+                - application/json
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AskFunction.Arn}/invocations
+                timeoutInMillis: 90000
+              responses: {}
+
+  IngestFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/lambdas/ingest/handler.ts
+        Format: esm
+        OutExtension:
+          - .js=.mjs
+        Target: node24
+        Minify: false
+        Sourcemap: true
+        UseNpmCi: true
+    Properties:
+      FunctionName: !Sub doc-qa-ingest-${AppEnv}
+      CodeUri: .
+      Handler: src/lambdas/ingest/handler.handler
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  AskFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/lambdas/ask/handler.ts
+        Format: esm
+        OutExtension:
+          - .js=.mjs
+        Target: node24
+        Minify: false
+        Sourcemap: true
+        UseNpmCi: true
+    Properties:
+      FunctionName: !Sub doc-qa-ask-${AppEnv}
+      CodeUri: .
+      Handler: src/lambdas/ask/handler.handler
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  IngestInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt IngestFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${DocQaApi}/*/POST/ingest
+
+  AskInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt AskFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${DocQaApi}/*/POST/ask
+
+Outputs:
+  ApiBaseUrl:
+    Description: Base URL for the deployed REST API
+    Value: !Sub https://${DocQaApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod

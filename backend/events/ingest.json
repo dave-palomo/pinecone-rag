@@ -1,0 +1,10 @@
+{
+  "resource": "/ingest",
+  "path": "/ingest",
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"documents\":[{\"id\":\"refund-policy\",\"title\":\"Refund Policy\",\"content\":\"Full refund within 30 days with receipt. No refunds on digital goods.\"}]}",
+  "isBase64Encoded": false
+}

@@ -1,0 +1,10 @@
+{
+  "resource": "/ask",
+  "path": "/ask",
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"question\":\"Can I get a refund on a digital product?\"}",
+  "isBase64Encoded": false
+}
