@@ -1,0 +1,5 @@
+openai==2.54.0
+pinecone==10.0.0
+pydantic==2.13.5
+python-dotenv==1.2.3
+tiktoken==0.14.0

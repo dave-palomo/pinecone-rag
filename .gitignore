@@ -1,0 +1,92 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging and build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+wheels/
+pip-wheel-metadata/
+*.zip
+
+# AWS Lambda / infrastructure build output
+.aws-sam/
+.serverless/
+.chalice/deployments/
+cdk.out/
+.lambda-build/
+lambda-package/
+env.local.json
+samconfig.toml
+
+# Local AWS configuration and credentials
+.aws/
+credentials
+
+# Secrets and local environment variables
+.env
+.env.*
+!.env.example
+.secrets/
+secrets.json
+secrets.yaml
+secrets.yml
+credentials.json
+*.pem
+*.key
+
+# OpenAI / Pinecone local state and caches
+.openai/
+.pinecone/
+.cache/
+
+# Tests, coverage, and static-analysis caches
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.pyright/
+.ruff_cache/
+.hypothesis/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs and local databases
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# IDEs and editors
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Deferred project files
+/frontend/
+/sam_fix.md
+/backend_specs.md

@@ -1,0 +1,10 @@
+{
+  "body": "{\"documents\":[{\"id\":\"refund-policy\",\"title\":\"Refund Policy\",\"content\":\"Full refund within 30 days with receipt.\"}]}",
+  "headers": {
+    "content-type": "application/json"
+  },
+  "httpMethod": "POST",
+  "path": "/ingest",
+  "isBase64Encoded": false
+}
+

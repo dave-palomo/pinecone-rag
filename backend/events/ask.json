@@ -1,0 +1,10 @@
+{
+  "body": "{\"question\":\"Can I get a refund?\"}",
+  "headers": {
+    "content-type": "application/json"
+  },
+  "httpMethod": "POST",
+  "path": "/ask",
+  "isBase64Encoded": false
+}
+
