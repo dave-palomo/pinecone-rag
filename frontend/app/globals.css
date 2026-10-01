@@ -71,6 +71,8 @@ html {
 
 
 body {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   color: var(--color-text);
   background: var(--color-background);
@@ -120,6 +122,10 @@ button {
 
 .skip-link:focus {
   transform: translateY(0);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,9 +1,10 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { askQuestion } from "@/lib/api";
 import type { AskResponse } from "@/lib/types";
 import { AnswerResult } from "@/components/AnswerResult";
+import { SpinnerIcon } from "@/components/icons";
 import { StatusMessage } from "@/components/StatusMessage";
 import styles from "./ui.module.css";
 
@@ -13,6 +14,25 @@ export function QuestionForm() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const answerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!result || !answerRef.current) return;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    answerRef.current.scrollIntoView({
+      behavior: prefersReduced ? "instant" : "smooth",
+      block: "start",
+    });
+  }, [result]);
+
+  const canClear = Boolean(question || result || error);
+
+  function clearForm() {
+    setQuestion("");
+    setResult(null);
+    setError(null);
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -21,6 +41,7 @@ export function QuestionForm() {
     }
 
     const trimmedQuestion = question.trim();
+    setResult(null);
     setError(null);
 
     if (!trimmedQuestion) {
@@ -59,13 +80,32 @@ export function QuestionForm() {
             aria-invalid={Boolean(error && !question.trim())}
           />
         </div>
-        <button
-          className={styles.primaryButton}
-          type="submit"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Asking..." : "Ask question"}
-        </button>
+        <div className={styles.questionFormActions}>
+          {canClear ? (
+            <button
+              className={styles.secondaryButton}
+              type="button"
+              onClick={clearForm}
+              disabled={isSubmitting}
+            >
+              Clear
+            </button>
+          ) : null}
+          <button
+            className={styles.primaryButton}
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <SpinnerIcon className={styles.spinnerIcon} />
+                Asking...
+              </>
+            ) : (
+              "Ask question"
+            )}
+          </button>
+        </div>
       </form>
 
       <div className={styles.askStatus}>
@@ -78,7 +118,11 @@ export function QuestionForm() {
         ) : null}
       </div>
 
-      {result ? <AnswerResult result={result} /> : null}
+      {result ? (
+        <div ref={answerRef}>
+          <AnswerResult result={result} />
+        </div>
+      ) : null}
     </div>
   );
 }

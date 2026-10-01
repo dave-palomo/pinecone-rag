@@ -60,6 +60,7 @@
 }
 
 .pageShell {
+  flex: 1;
   width: min(100% - 40px, var(--content-width));
   margin: 0 auto;
   padding: 64px 0 88px;
@@ -325,13 +326,23 @@
   flex: 0 0 auto;
 }
 
+.spinnerIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  animation: spin 0.75s linear infinite;
+}
+
 .formHint {
   margin-top: 7px;
   color: var(--color-text-muted);
   font-size: 0.78rem;
 }
 
-.questionForm .primaryButton {
+.questionFormActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-top: 20px;
 }
 
@@ -499,5 +510,119 @@
 
   .documentLegend {
     gap: 12px;
+  }
+}
+
+/* ── Tech stack ── */
+
+.techStack {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding-top: 28px;
+  margin-top: 28px;
+  border-top: 1px solid var(--color-border);
+}
+
+.techStackLabel {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.techList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  list-style: none;
+}
+
+.techItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  font-weight: 500;
+}
+
+.techIcon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+/* ── Footer ── */
+
+.siteFooter {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-header-bg);
+}
+
+.footerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(100% - 40px, var(--header-width));
+  min-height: 60px;
+  margin: 0 auto;
+}
+
+.footerCopy {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.socialLinks {
+  display: flex;
+  gap: 10px;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  color: var(--color-text-muted);
+  transition: color 150ms ease, border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.socialLink:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  background: var(--color-surface);
+}
+
+.socialLink:focus-visible {
+  outline: 0;
+  border-radius: 7px;
+  box-shadow: var(--shadow-focus);
+}
+
+.socialIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .footerInner {
+    width: min(100% - 32px, var(--header-width));
+    min-height: 54px;
+  }
+
+  .footerCopy {
+    font-size: 0.78rem;
   }
 }

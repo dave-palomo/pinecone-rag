@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TechStack } from "@/components/TechStack";
 import styles from "./home.module.css";
 
 export default function Home() {
@@ -38,6 +39,8 @@ export default function Home() {
             Review the answer and its sources
           </p>
         </div>
+
+        <TechStack />
       </section>
     </main>
   );
