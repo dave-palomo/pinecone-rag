@@ -2,6 +2,11 @@
 
 A full-stack Retrieval-Augmented Generation (RAG) app. Ingest plain-text documents and ask natural-language questions; the backend retrieves the most relevant passages from Pinecone and uses an OpenAI model to produce a grounded answer with source citations.
 
+| Service | URL |
+|---|---|
+| Frontend | https://pinecone-rag-frontend.vercel.app |
+| Backend API | https://pinecone-rag-production.up.railway.app |
+
 ---
 
 ## Architecture
