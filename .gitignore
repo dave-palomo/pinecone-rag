@@ -66,3 +66,7 @@ backend/npm
 
 # Lambda deployment packages
 *.zip
+
+# Internal project specs (not for public repo)
+backend_specs.md
+*.pdf
