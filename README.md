@@ -76,3 +76,4 @@ not provide a transaction spanning the subsequent delete and upsert, so a
 failure in that small window can temporarily remove or partially replace a
 document. This is accepted for the synchronous prototype. Large documents and
 asynchronous S3/SQS ingestion are outside its scope.
+.
