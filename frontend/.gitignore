@@ -44,3 +44,7 @@ next-env.d.ts
 # e2e build output and test artifacts
 .next-e2e/
 test-results/
+
+# auto-generated and internal tooling files
+AGENTS.md
+CLAUDE.md
